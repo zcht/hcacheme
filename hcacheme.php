@@ -6,7 +6,7 @@
  * folder: hcacheme
  * class: hCacheMe
  * type: system
- * hooks: theme_index_top, debug_footer
+ * hooks: theme_index_top, debug_footer, admin_plugin_tabLabel_pre_first, admin_plugin_tabContent_pre_first
  * author: Andreas Votteler
  * authorurl: http://www.trendkraft.de
  *
@@ -43,7 +43,9 @@ class hCacheMe
     */ 
     public function theme_index_top($h)
     {
-
+        // fail if apc not loaded
+        if (!extension_loaded('apc')) return false;
+        
         $url = $h->cage->server->sanitizeTags('REQUEST_URI');
         $cacheid = 'cacheme_' . md5($url);
 
@@ -83,6 +85,20 @@ class hCacheMe
             }
         }
 
+        
+        public function admin_plugin_tabLabel_pre_first($h)
+        {            
+                echo '<li><a href="#dashboard" data-toggle="tab">Dashboard</a></li>';
+        }        
+
+        public function admin_plugin_tabContent_pre_first($h)
+        {                                    
+                $info = apc_cache_info();
+                echo '<div class="tab-pane" id="dashboard">';     
+                    include('templates/hcacheme_dashboard.php');
+                echo '</div>';
+        }
+                
     }
 
 ?>
