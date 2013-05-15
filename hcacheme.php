@@ -1,12 +1,12 @@
 <?php
 /**
- * name: CacheMe
- * description: mein CacheSystem
+ * name: hCacheMe
+ * description: APC for Hotaru CMS
  * version: 0.1
- * folder: cacheme
+ * folder: hcacheme
  * class: hCacheMe
  * type: system
- * hooks: theme_index_top
+ * hooks: theme_index_top, debug_footer
  * author: Andreas Votteler
  * authorurl: http://www.trendkraft.de
  *
@@ -36,6 +36,7 @@ class hCacheMe
 {    
 
     /**
+    * http://www.phpgangsta.de/high-performance-caching-reloaded-mit-php
     *
     * @param 
     * @param 
@@ -43,34 +44,44 @@ class hCacheMe
     */ 
     public function theme_index_top($h)
     {
-        
 
         $url = $h->cage->server->sanitizeTags('REQUEST_URI');
         $cacheid = 'cacheme_' . md5($url);
 
-
         if(apc_exists($cacheid) != false)
         {
-
             $output = apc_fetch($cacheid);
             echo $output;
             //exit;
         } 
-        
-        
-
 
         ob_start();
 
-
         require_once('index.php');
-
 
         $output = ob_get_contents();
 
-
         apc_store($cacheid, $output, 300);
 
+        }
+
+        
+        
+     /**
+    *
+    * @param 
+    * @param 
+    * @return 
+    */ 
+        public function debug_footer($h)
+        {
+            if (!extension_loaded('apc')) { 
+                echo " | apc not loaded";
+            } else  {
+                $cacheid = 'cacheme_' . md5($h->cage->server->sanitizeTags('REQUEST_URI'));
+                    if(apc_exists($cacheid) != false) $msg = " and page was cached"; else $msg = " but page not cached";             
+                echo ' | apc loaded' . $msg;
+            }
         }
 
     }
