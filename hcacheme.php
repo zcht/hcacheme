@@ -36,7 +36,6 @@ class hCacheMe
 {    
 
     /**
-    * http://www.phpgangsta.de/high-performance-caching-reloaded-mit-php
     *
     * @param 
     * @param 
