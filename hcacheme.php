@@ -6,7 +6,7 @@
  * folder: hcacheme
  * class: hCacheMe
  * type: system
- * hooks: theme_index_top, debug_footer, admin_plugin_tabLabel_pre_first, admin_plugin_tabContent_pre_first
+ * hooks: theme_index_top, debug_footer, admin_plugin_tabLabel_pre_first, admin_plugin_tabContent_pre_first, maintenance_clear_all_cache
  * author: Andreas Votteler
  * authorurl: http://www.trendkraft.de
  *
@@ -85,6 +85,15 @@ class hCacheMe
             }
         }
 
+        public function maintenance_clear_all_cache($h)
+        {
+            $result = apc_clear_cache();
+            
+            if ($result == 1) 
+                $h->messages['apc memory cache cleared'] = 'alert-success';
+            else
+                $h->messages['error clearing apc memory cache'] = 'alert-danger';
+        }
         
         public function admin_plugin_tabLabel_pre_first($h)
         {            
